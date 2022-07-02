@@ -73,3 +73,5 @@ Data Sinks
 ● writeUsingOutputFormat()/FileOutputFormat -> writes output as per the provided fileoutputformat.
 ● writeToSocket -> Writes elements to a socket according to a serialization schema
 ● addSink -> to add a custom data sink outside of Flink ex Kafka , Flume etc using connectors
+
+Iterative Stream accepts feedback to itself and comprises of FeedbackStream and OutputStream. If condition is met then go to output stream

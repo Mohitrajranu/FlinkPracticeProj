@@ -50,14 +50,19 @@ StreamExecutionEnvironment -> StreamExecutionEnvironment(object)<method>
 ● readFile(FileInputFormat,path,watchType,interval,pathFilter) -> Reads the file based on the provided fileinputformat watchType and scans the file periodically for any new data in every (x) ms where x is equal to interval value in milliseconds.
 watchType-> FileProcessingMode.PROCESS_CONTINUOUSLY source is monitored periodically(based on the interval provided) for any new data 
 FileProcessingMode.PROCESS_ONCE -> scan the path once read the data , create checkpoint and exits it will never visit that checkpoint again , total file is read in checkpoints : Slow recovery in case of node failure
-                                         | Reading Process |
+                                                               
+
+
+                                                                                  | Reading Process |
 										 /                 \
 										/                   \
-									   /                     \
+									       /                     \
 									Monitoring            Actual Reading
-				●Scan path based on watchtype             ● Performed by multiple readers
-				●Divide into splits                       ● Readers run parallely
-				● Assign splits to readers                ● Each split read by only one readers
+				                              ●Scan path based on watchtype             ● Performed by multiple readers
+				                              ●Divide into splits                       ● Readers run parallely
+				                              ● Assign splits to readers                ● Each split read by only one readers
+							      
+							      
 ● socketTextStream -> Reads data from a socket,elements can be seperated by a delimeter
 ● addSource -> To add a custom data Source outside of Flink example: Kafka,Flume,Twitter API etc.
 

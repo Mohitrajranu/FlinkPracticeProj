@@ -75,3 +75,18 @@ Data Sinks
 ● addSink -> to add a custom data sink outside of Flink ex Kafka , Flume etc using connectors
 
 Iterative Stream accepts feedback to itself and comprises of FeedbackStream and OutputStream. If condition is met then go to output stream
+Data is of the following schema
+
+# cab id, cab number plate, cab type, cab driver name, ongoing trip/not, pickup location, destination,passenger count
+
+Using Datastream/Dataset transformations find the following for each ongoing trip.
+
+1.) Popular destination.  | Where more number of people reach.
+
+2.) Average number of passengers from each pickup location.  | average =  total no. of passengers from a location / no. of trips from that location.
+
+3.) Average number of trips for each driver.  | average =  total no. of passengers drivers has picked / total no. of trips he made
+
+Questions for this assignment
+What all transformation operations you will use?
+map, filter, reduce, groupby, sum, maxby

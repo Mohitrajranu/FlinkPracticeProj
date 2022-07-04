@@ -90,3 +90,30 @@ Using Datastream/Dataset transformations find the following for each ongoing tri
 Questions for this assignment
 What all transformation operations you will use?
 map, filter, reduce, groupby, sum, maxby
+
+Windowing : Windows split the data stream into buckets of finite size over which computation can be applied.
+Tumbling Windows : Time based, the next window starts after first window ends.
+Sliding Windows : Time based , windows overlap.
+Window will emit the result once the specific time limit is passed
+Non Keyed Stream uses WindowAll() , whereas Keyed Stream use Window() assigner, Window assigner defines how entities are assigned to windows.
+Session Windows
+Global Windows
+
+Processing Time :: System time of machine which executes task.
+Source-->Flink Ingestion-->Processing
+If TimeCharacteristic.ProcessingTime is used then notion is processing time.
+Window will system clock of the machine
+Simplest notion of time requires no co-ordination between streams and machines
+best performance and low latency ., less suitable for distributed environment.
+
+Event Time :: Event time is time at which event occured on source
+Source-->Flink Ingestion-->Processing
+Event time is embedded within each record
+consistent and deterministic results regardless of order they arrive at flink.
+shows latency while waiting out of order events.
+
+Ingestion Time :: Each record gets source's current timestamp.
+Source-->Flink Ingestion-->Processing
+All time based operations refer to that timestamp.
+Ingestion time uses stable timestamp
+can-not handle out-of-order events or late data.

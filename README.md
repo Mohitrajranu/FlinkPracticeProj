@@ -53,14 +53,14 @@ FileProcessingMode.PROCESS_ONCE -> scan the path once read the data , create che
                                                                
 
 
-                                                                                  | Reading Process |
-										 /                 \
-										/                   \
-									       /                     \
+                                          | Reading Process |
+										 /                   \
+										/                     \
+									  /                        \
 									Monitoring            Actual Reading
-				                              ●Scan path based on watchtype             ● Performed by multiple readers
-				                              ●Divide into splits                       ● Readers run parallely
-				                              ● Assign splits to readers                ● Each split read by only one readers
+				         ●Scan path based on watchtype             ● Performed by multiple readers
+				         ●Divide into splits                       ● Readers run parallely
+				        ● Assign splits to readers                ● Each split read by only one readers
 							      
 							      
 ● socketTextStream -> Reads data from a socket,elements can be seperated by a delimeter

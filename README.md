@@ -96,8 +96,9 @@ Tumbling Windows : Time based, the next window starts after first window ends.
 Sliding Windows : Time based , windows overlap.
 Window will emit the result once the specific time limit is passed
 Non Keyed Stream uses WindowAll() , whereas Keyed Stream use Window() assigner, Window assigner defines how entities are assigned to windows.
-Session Windows
-Global Windows
+Session Windows : Created based on activity , Doesnot have fix start or end time.Window closes whenever there is a gap of inactivity , 
+A new window is created for every event , and if two or more windows lie in the same time range then the window is said to be mergeable and merged into a single window.
+Global Windows : 1 window per key , do computations with the help of trigger
 
 Processing Time :: System time of machine which executes task.
 Source-->Flink Ingestion-->Processing
@@ -117,3 +118,55 @@ Source-->Flink Ingestion-->Processing
 All time based operations refer to that timestamp.
 Ingestion time uses stable timestamp
 can-not handle out-of-order events or late data.
+
+TRIGGERS :: Trigger determines when a window is ready to be processed, All window assigners comes with default triggers.
+public abstract TriggerResult onElement (T element,long timestamp,W window,TriggerContext ctx)
+public abstract TriggerResult onEventTime (long time,W window,TriggerContext ctx)
+public abstract TriggerResult onProcessingTime (long time,W window,TriggerContext ctx)
+public void onMerge(W window,OnMergeContext ctx)
+public abstract void clear(W window,TriggerContext ctx)
+
+Return-Types for TriggerResult are of 4 types ::
+CONTINUE : do nothing [on element]
+FIRE : Trigger the computation[default]
+PURGE : Clear contents of window
+FIRE_AND_PURGE : Trigger the computation and clear contents of window after it.
+
+EventTime Trigger :: This trigger fires based upon progress of event time.
+                     .trigger(EventTimeTrigger.create())
+ProcessingTime Trigger :: This Trigger fires based upon progress of processing time.
+                      .trigger(ProcessingTimeTrigger.create())
+Count Trigger :: This Trigger fires when the number of elements in a window exceeds the count specified in parameters.
+                      .trigger(CountTrigger.of(5))       
+Purging Trigger :: This trigger takes another trigger as argument and purger it after the inner one fires.
+                      .trigger(PurgingTrigger.of(CountTrigger.of(5)))       
+                      
+EVICTORS :: Evictors is used to remove elements from a window after the trigger fires and before and/or after the window function is applied.
+
+Window Created         -> Trigger         ->     Window Function           -> Result
+.window(),.windowall()     .trigger()      |->     reduce,fold,aggregate etc  ^                                            
+                                           |___ Evictor_______________________|
+                                           .evictor()
+void evictBefore
+void evictAfter
+
+CountEvictor :: keeps the user-specified number of elements from the window and discard the remaining ones, 
+                .evictor(CountEvictor.of(4))       
+
+DeltaEvictor :: takes a deltafunction and a threshold as arguments, computes a delta between the last element in the window
+ and the remaining elements and then removes those elements whose delta is greater or equal to threshold.
+                .evictor(DeltaEvictor.of(threshold,new MyDelta()))   
+TimeEvictor :: takes argument as an interval in milliseconds and for a given window it finds the maximum timestamp
+max_ts amongst its elements and removes all those elements with timestamps smaller than max_ts-interval
+                .evictor(TimeEvictor.of(Time.of(evictionsec,TimeUnit.SECONDS)))       
+                
+---> Mechanism to measure progress of event time in Flink is called watermarks. A watermark declares the amount of event time 
+passed in the stream.
+--> Late elements are the elements that arrive after the watermark has crossed the elements timestamp value.
+Allowed lateness is the time by which a element can be late before it is dropped , elements with timestamp = (Watermark + Allowed Lateness)
+are still added in the window , default value of Allowed Lateness is 0.Late elements may cause the window to fire again with updated
+results. Flink keeps a state of Window until the allowed lateness time expires. The output will contain multiple results for the
+same computation.
+SIDE Output :
+Demo<T> result = input.keyBy().window().allowedlatenes(time).sideOutputLateData(lateOutputTag).
+                 <windowed transformation>(<window function>)   -> ProcessFunction,CoProcessFunction,ProcessWindowFunction,ProcessWindowAllFunction                                                               

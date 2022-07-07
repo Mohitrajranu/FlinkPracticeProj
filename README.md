@@ -169,4 +169,19 @@ results. Flink keeps a state of Window until the allowed lateness time expires. 
 same computation.
 SIDE Output :
 Demo<T> result = input.keyBy().window().allowedlatenes(time).sideOutputLateData(lateOutputTag).
-                 <windowed transformation>(<window function>)   -> ProcessFunction,CoProcessFunction,ProcessWindowFunction,ProcessWindowAllFunction                                                               
+                 <windowed transformation>(<window function>)   -> ProcessFunction,CoProcessFunction,ProcessWindowFunction,ProcessWindowAllFunction  
+DataStream<T> lateStream = result.getSideOutput(lateOutputTag);
+
+Built-in Watermark Generators::
+.assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor<MyEvent>(Time.seconds(10))
+{
+public long extractTimestamp(MyEvent element){
+return timestamp;
+}
+}                 
+ 
+ .assignTimestampsAndWatermarks(new AscendingTimestampExtractor<MyEvent>()
+ {
+ <logic>
+ }
+ )                                                                             

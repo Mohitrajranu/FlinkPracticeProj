@@ -184,4 +184,36 @@ return timestamp;
  {
  <logic>
  }
- )                                                                             
+ )     
+ 
+ State :: State is a snapshot of a application(operators) at any particular time which remembers information about past input/events
+  which will affect the future output.
+  state can be used in any of the following ways:
+  To search for certain event patterns happened so far.
+  To train a Machine learning model over a stream of data points , To manage historic data it allows efficient access to past events
+  To achieve fault-tolerance through checkpointing. A state helps in restarting the system from the failure point.
+  To rescale jobs(parallelism). During the rescaling operation flink takes the previous saved states from the persisted disk such as hdfs.
+  and distribute it across the new jobs.
+  To convert stateless transformations to stateful transformations.
+  
+  Stateless Transformation :: Current output is dependent on current input element,independent of previous input elements.
+  No need to accumulate any data.
+  ex :-> Map,FlatMap,Filter
+  Stateful Transformation :: Current output is dependent on current input element and previous inputs.Need to accumulate previous input.
+  Ex :-> Reduce,Sum,Aggregate
+  State Objects:: ValueState<T>,ReducingState<T>,ListState<T>
+  
+Fault Tolerance and checkpointing :: Fault Tolerance in flink ensures that in case of failures the application will be recovered fully
+ and the application will be restarted exactly from the failure point.
+ 
+Checkpointing :: Checkpointing is to consistently draw snapshots of distributed data stream and corresponding operator state.
+Each drawn snapshot will hold a full application state till the checkpointed time.
+Snapshots/Checkpoints are light weight and does not impact much on performance.
+After the snapshot is taken it is saved into a persistent storage(State backend) ex:-> HDFS
+crash -> stop the dataflow -> take the state from the latest checkpoint -> According to the latest checkpoined state
+=>Reset Data Stream => Restart Operator/Application
+DataStream source/message queue broker should have the ability to rewind the data stream example:: Apache Kafka
+
+Barrier Snapshotting: Flink will take a snapshot/create a checkpoint based on stream barriers.
+
+                     

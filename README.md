@@ -215,5 +215,15 @@ crash -> stop the dataflow -> take the state from the latest checkpoint -> Accor
 DataStream source/message queue broker should have the ability to rewind the data stream example:: Apache Kafka
 
 Barrier Snapshotting: Flink will take a snapshot/create a checkpoint based on stream barriers.
+Synchronous Snapshot:: Flink operators will stop processing new records while snapshot/checkpoint is being written.
+Asynchronous Snapshot:: Flink operators will not stop processing new records while snapshot/checkpoint is being written.
+-> Use a managed state , Use a state backend that supports asynchronous snapshotting.
+
+State Backend :: State backend determines how and where a checkpoint state is stored.
+Memory StateBackend :: Stores the state's data internally as objects on Java Heap.
+FS StateBackend :: Stores the state's data internally into specified filesystem ex-HDFS
+RocksDb StateBackend :: Stores the in-flight data (temp data) in RocksDb database, upon checkpointing the same database is 
+written to Filesystem ex:-HDFS
+
 
                      

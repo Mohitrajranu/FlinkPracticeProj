@@ -18,6 +18,7 @@ public class DataServer {
 					PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 					Random rand = new Random();
 					Date d = new Date();
+					//for(int x=1;x<50;++x)
 					while (true){
 						int i = rand.nextInt(100);
 						String s = "" + System.currentTimeMillis() + "," + i;	

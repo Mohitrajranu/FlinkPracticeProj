@@ -225,5 +225,30 @@ FS StateBackend :: Stores the state's data internally into specified filesystem 
 RocksDb StateBackend :: Stores the in-flight data (temp data) in RocksDb database, upon checkpointing the same database is 
 written to Filesystem ex:-HDFS
 
+Incremental Checkpointing :: In Incremental checkpointing, we do not write the full state for every checkpoint rather for consecutive
+states we will only save the delta(changes between 2 checkpoints).
+Disadvantages of normal checkpointing:
+->In case of synchronous snapshotting, writing a huge state will increase the job processing time.
+->Writing checkpoints with Gb's ,Tb's of state very frequently to disk consumes disk space and degrades overall performance.
+To enable incremental checkpointing :-> RocksDBStateBackend backend = new RocksDBStateBackend(filebackend,true);
+set the flag to true.
+
+Types of States :-> 
+Operator State: State is bound to 1 operator instance,1 state per operator instance.
+Keyed State: 1 State per operator instance per key[operator state partitioned as key]
+Operator and keyed state are further categorised into Managed state and Raw state
+
+Managed State :: Totally controlled by Flink saved in HashTables. ValueState<T>,ReducingState<T>,ListState<T>
+Raw State :: Controlled by operators itself, in their own data structures.
+
+Managed Keyed state::  ValueState<T>,ReducingState<T>,ListState<T>,AggregatingSate<T>
+
+ValueState<T> :Maintains a single value in it
+ListState<T> :Maintains a list of state.
+ReducingState<T> : Reducing state keeps a single value in it and that value is sum of all the elements added in the state so far.
+  
+
+
+
 
                      

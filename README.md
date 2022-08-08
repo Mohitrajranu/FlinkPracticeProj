@@ -246,7 +246,47 @@ Managed Keyed state::  ValueState<T>,ReducingState<T>,ListState<T>,AggregatingSa
 ValueState<T> :Maintains a single value in it
 ListState<T> :Maintains a list of state.
 ReducingState<T> : Reducing state keeps a single value in it and that value is sum of all the elements added in the state so far.
-  
+
+Managed Operator state:
+It is available to all the operations.
+public class StateDemo implements SinkFunction<> ,Checkpointedfunction/ListCheckpointedFunction
+Checkpointedfunction interface methods:
+void snapshotState(FunctionSnapshotContext context) throws Exception:
+void initializeState(FunctionInitializationContext context) throws Exception:
+SinkFunction Interface Methods:
+public void invoke() throws Exception
+
+Restart Strategies:: 
+Fixed Delay Restart Strategy: Flink attempts a given no of time t, restart the job before it fails.
+ env.setRestartStrategy(RestartStrategies.fixedDelayRestart(max no of restart attempts, delay Time));
+Failure Rate Restart Strategy:Flink will keep on trying restarting till failure rate exceeds.
+env.setRestartStrategy(RestartStrategies.failureRateRestart(failure rate, time interval for measuring failure rate,delay));
+No Restart Strategy : Flink will not try to restart the job.
+env.setRestartStrategy(RestartStrategies.noRestart());
+Fallback Restart Strategy : The cluster defined restart strategy is used.
+
+BROADCAST STATE::
+Broadcast state is used in cases where some data is required to be broadcasted to all the running nodes and tasks in cluster.
+The broadcasted stream/state is saved locally on each machine and all tasks running on a machine will access it locally.
+
+For Key --> KeyedBroadcastProcessFunction
+For non Key --> BroadcastProcessFunction
+
+QUERYABLE STATE::
+Queryable State is used to expose Flink's managed keyed state to the outside world and allows users to query that state from outside flink.
+Example: A simple java program will access a flink's program managed state(if set to Queryable state)
+
+Architecture Components:
+QueryableStateClient : Runs outside Flink cluster and submits the user queries.
+QueryableStateClientProxy : Runs inside the flink cluster and is responsible for receiving the client's queries.
+QueryableStateServer : Runs inside the Flink cluster on each TaskManager and is responsible for serving the locally stored state.
+
+  2                                       3
+1Client :Request for state of k1 key-->2Proxy:Query for state of k1 key from T1-->3State Server
+                                         ||
+2.1.Fetch taskmanager for k1 key(From the proxy)  < Job Manager> 2.2.Return TaskManager(T1) for k1 key(to the proxy)       
+
+
 
 
 

@@ -286,6 +286,8 @@ QueryableStateServer : Runs inside the Flink cluster on each TaskManager and is 
                                          ||
 2.1.Fetch taskmanager for k1 key(From the proxy)  < Job Manager> 2.2.Return TaskManager(T1) for k1 key(to the proxy)       
 
+Case Study :
+Twitter data analysis: create a twitter developer account , using twitter credentials apps.twitter.com
 
 
 

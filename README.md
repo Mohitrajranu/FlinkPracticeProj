@@ -294,6 +294,8 @@ core idea of both api is same i.e., to process the data in table form.Same synta
 both are tightly integrated with other apis like DataStream and DataSet.Can switch between apis within a program
 Table api is a language integrated(java or scala) query api.No Sql like syntax , SQL API is based on Apache Calcite which implements SQL standard.SQL like syntax.
 
+Gelly API for GRAPH PROCESSING
+A graph is an ordered set of vertices and edges, vertices are entities and edges are relationship between entities.
 
 
 
